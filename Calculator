@@ -1,0 +1,90 @@
+package aclcbukidnon.com.javafxactivity;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class TrafficLightController {
+
+    private JPanel panel;
+    private int lightState = 0;  // 0 for red, 1 for yellow, 2 for green
+    private int timeRemaining = 8;  // Time remaining for the active light color
+    private final int redTime = 8;  // Red light time (in seconds)
+    private final int yellowTime = 4;  // Yellow light time (in seconds)
+    private final int greenTime = 8;  // Green light time (in seconds)
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new TrafficLightController().createAndShowGUI());
+    }
+
+    private void createAndShowGUI() {
+        JFrame frame = new JFrame("Traffic Light");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 400);
+        frame.setLocationRelativeTo(null);
+
+        JPanel containerPanel = new JPanel();
+        containerPanel.setLayout(new BorderLayout());
+
+        panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                drawTrafficLight(g);
+            }
+        };
+        panel.setBackground(Color.BLACK); // Set the background to black
+        panel.setPreferredSize(new Dimension(200, 300));
+        containerPanel.add(panel, BorderLayout.CENTER);
+
+        frame.add(containerPanel);
+
+        Timer timer = new Timer(1000, _ -> {
+            timeRemaining--;
+            panel.repaint();
+
+            if (timeRemaining == 0) {
+                lightState = (lightState + 1) % 3;
+                if (lightState == 0) {
+                    timeRemaining = redTime;
+                } else if (lightState == 1) {
+                    timeRemaining = yellowTime;
+                } else {
+                    timeRemaining = greenTime;
+                }
+            }
+        });
+        timer.start();
+
+        frame.setVisible(true);
+    }
+
+    private void drawTrafficLight(Graphics g) {
+        // Draw traffic light box
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(50, 50, 100, 250);
+
+        // Red light
+        g.setColor(lightState == 0 ? Color.RED : new Color(255, 102, 102));  // Dimmed red
+        g.fillOval(75, 60, 50, 50);
+
+        // Yellow light
+        g.setColor(lightState == 1 ? Color.YELLOW : new Color(255, 255, 153));  // Dimmed yellow
+        g.fillOval(75, 130, 50, 50);
+
+        // Green light
+        g.setColor(lightState == 2 ? Color.GREEN : new Color(144, 238, 144));  // Dimmed green
+        g.fillOval(75, 200, 50, 50);
+
+        // Timer text
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.setColor(Color.BLACK);
+
+        if (lightState == 0) {
+            g.drawString(String.valueOf(timeRemaining), 95, 90);
+        } else if (lightState == 1) {
+            g.drawString(String.valueOf(timeRemaining), 95, 160);
+        } else if (lightState == 2) {
+            g.drawString(String.valueOf(timeRemaining), 95, 230);
+        }
+    }
+}
