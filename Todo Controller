@@ -1,0 +1,113 @@
+package aclcbukidnon.com.javafxactivity;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class TodoController {
+
+    // Declare UI components
+    private JFrame frame;
+    private JTextField taskField;
+    private JList<String> taskList;
+    private DefaultListModel<String> taskListModel;
+
+    // Main method to launch the application
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new TodoController().createAndShowGUI());
+    }
+
+    // Method to create and show the GUI
+    private void createAndShowGUI() {
+        // Create the main frame with black background
+        frame = new JFrame("To-Do List");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(450, 350);  // Adjusted size for better UI layout
+        frame.getContentPane().setBackground(Color.BLACK);  // Set the frame background color
+
+        // Set the layout manager for the frame
+        frame.setLayout(new BorderLayout(10, 10));
+
+        // Create the task list model and the JList component
+        taskListModel = new DefaultListModel<>();
+        taskList = new JList<>(taskListModel);
+        taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        taskList.setBackground(new Color(45, 45, 45));  // Dark background for the task list
+        taskList.setForeground(Color.WHITE);  // White text color for the task list
+        taskList.setFont(new Font("Arial", Font.PLAIN, 16));  // Set the font for task list
+        taskList.setSelectionBackground(new Color(33, 150, 243)); // Highlight selected item with blue
+        taskList.setSelectionForeground(Color.WHITE); // White text for selected item
+        JScrollPane scrollPane = new JScrollPane(taskList);  // Add scroll pane for the task list
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        // Create the input panel for adding tasks
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BorderLayout());
+        inputPanel.setBackground(Color.BLACK); // Black background for the input panel
+
+        taskField = new JTextField();
+        taskField.setBackground(new Color(50, 50, 50)); // Dark background for the input field
+        taskField.setForeground(Color.WHITE); // White text color
+        taskField.setFont(new Font("Arial", Font.PLAIN, 16)); // Set font for task input
+        taskField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding around text field
+
+        // Buttons
+        JButton addButton = new JButton("Add Task");
+        styleButton(addButton, new Color(0, 153, 0)); // Green button
+        addButton.addActionListener(_ -> addTask());
+
+        JButton removeButton = new JButton("Remove Task");
+        styleButton(removeButton, new Color(204, 0, 0)); // Red button
+        removeButton.addActionListener(_ -> removeTask());
+
+        // Add components to the input panel
+        JPanel addRemovePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        addRemovePanel.setBackground(Color.BLACK); // Black background for the add/remove panel
+        addRemovePanel.add(addButton);
+        addRemovePanel.add(removeButton);
+
+        inputPanel.add(taskField, BorderLayout.CENTER); // Add text field to input panel
+        frame.add(inputPanel, BorderLayout.SOUTH);  // Add the input panel at the bottom of the frame
+        frame.add(addRemovePanel, BorderLayout.NORTH);  // Add buttons panel at the top of the frame
+
+        // Make the frame visible
+        frame.setLocationRelativeTo(null);  // Center the window
+        frame.setVisible(true);
+
+        // Focus on the text field when the window is shown
+        taskField.requestFocus();
+    }
+
+    // Method to style the buttons
+    private void styleButton(JButton button, Color backgroundColor) {
+        button.setFont(new Font("Arial", Font.BOLD, 14));  // Set bold font for buttons
+        button.setBackground(backgroundColor);  // Set button background color
+        button.setForeground(Color.WHITE);  // Set button text color to white
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));  // Add padding to buttons
+        button.setFocusPainted(false);  // Remove focus border when clicked
+        button.setPreferredSize(new Dimension(120, 40));  // Set button size
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));  // Change cursor to hand on hover
+    }
+
+    // Method to add a task to the list
+    private void addTask() {
+        String task = taskField.getText().trim();  // Get the task from the text field
+
+        if (!task.isEmpty()) {
+            taskListModel.addElement(task);  // Add task to the list model
+            taskField.setText("");  // Clear the text field after adding
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please enter a task.", "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Method to remove the selected task from the list
+    private void removeTask() {
+        int selectedIndex = taskList.getSelectedIndex();  // Get selected task index
+
+        if (selectedIndex != -1) {
+            taskListModel.remove(selectedIndex);  // Remove the task from the list model
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please select a task to remove.", "Selection Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
